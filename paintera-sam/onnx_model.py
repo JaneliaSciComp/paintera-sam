@@ -178,27 +178,40 @@ if __name__ == '__main__':
 
     print("Load model...", end="")
     start = time.time()
-    (predictor, ort_session) = load_model(sam, quantized_onnx)
+    (predictor, ort_session) = load_model(sam, onnx) #quantized_onnx)
     print(time.time() - start)
     print()
 
-    for i in range(20):
-        start = time.time()
-        (image, image_embedding) = predict_new_image("/tmp/sam.png", 225, 350, predictor=predictor, ort_session=ort_session, show=False)
+    # for i in range(20):
 
-        print(f"New Image Prediction: {time.time() - start}")
-        print()
+    start = time.time()
+    (image, image_embedding) = predict_new_image("/tmp/sam.png", 225, 350, predictor=predictor, ort_session=ort_session, show=False)
+
+    print(f"New Image Prediction: {time.time() - start}")
+    print()
+
+    start = time.time()
+    (image, image_embedding) = predict_new_image("/tmp/sam.png", 225, 350, predictor=predictor, ort_session=ort_session, show=False)
+
+    print(f"New Image Prediction: {time.time() - start}")
+    print()
+
+    start = time.time()
+    (image, image_embedding) = predict_new_image("/tmp/sam.png", 225, 350, predictor=predictor, ort_session=ort_session, show=False)
+
+    print(f"New Image Prediction: {time.time() - start}")
+    print()
 
     print()
     print(f"Overall: {time.time() - begin}")
 
-    print()
-    print("Reused Image Predications:")
-
-    for i in range(3):
-        print(f"{i}\t", end="")
-        predict_current_image(predictor, ort_session, 225, 350, image, image_embedding, show=False)
-    print()
+    # print()
+    # print("Reused Image Predications:")
+    #
+    # for i in range(3):
+    #     print(f"{i}\t", end="")
+    #     predict_current_image(predictor, ort_session, 225, 350, image, image_embedding, show=False)
+    # print()
 
     # print("Show")
     # run_predict(predictor, ort_session, 425, 350, image, image_embedding, show=True)
