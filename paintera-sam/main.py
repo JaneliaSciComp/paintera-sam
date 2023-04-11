@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+import os
+
+>>>>>>> d36c382 (feat: add onnx variant)
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -21,14 +26,25 @@ def show_mask(mask, ax, random_color=False):
     ax.imshow(mask_image)
 
 
+<<<<<<< HEAD
 def predict(img, x, y, out="/tmp/mask.png", show=False, predictor=SamPredictor(build_sam(checkpoint="/home/caleb/git/saalfeld/paintera-sam/sam_vit_h_4b8939.pth"))):
+=======
+def predict(img, x, y, out="/tmp/mask.png", show=False, predictor=None):
+
+    if predictor == None:
+        predictor = SamPredictor(build_sam(checkpoint="sam_vit_h_4b8939.pth"))
+>>>>>>> d36c382 (feat: add onnx variant)
 
     start = time.time()
     image = cv2.imread(img)
     # print(f"Read Image {time.time() - start}")
     start = time.time()
     predictor.set_image(image, image_format='BGR')
+<<<<<<< HEAD
     # print(f"Set Image {time.time() - start}")
+=======
+    print(f"Set Image {time.time() - start}")
+>>>>>>> d36c382 (feat: add onnx variant)
 
     input_points = np.array([[x, y]])
     input_labels = np.array([1])
@@ -43,7 +59,11 @@ def predict(img, x, y, out="/tmp/mask.png", show=False, predictor=SamPredictor(b
 
     start = time.time()
     masks, scores, logits = predictor.predict(input_points, input_labels)
+<<<<<<< HEAD
     # print(f"Predict {time.time() - start}")
+=======
+    print(f"Predict {time.time() - start}")
+>>>>>>> d36c382 (feat: add onnx variant)
 
     if show:
         for i, (mask, score) in enumerate(zip(masks, scores)):
@@ -58,22 +78,38 @@ def predict(img, x, y, out="/tmp/mask.png", show=False, predictor=SamPredictor(b
     cv2.imwrite(out, masks[0] * 255)
     # print(f"Write Image {time.time() - start}")
 
+<<<<<<< HEAD
     print("done!")
     print("ready!")
+=======
+    print("done!", flush=True)
+    print("ready!", flush=True)
+
+>>>>>>> d36c382 (feat: add onnx variant)
 
 if __name__ == "__main__":
     import time
     begining = time.time()
+<<<<<<< HEAD
     print(f"Predicitng {sys.argv}, `")
 
     sam_checkpoint = "/home/caleb/git/saalfeld/paintera-sam/sam_vit_h_4b8939.pth"
     model_type = "vit_h"
     # device = "cuda"
     device = "cpu"
+=======
+    print(f"Predicitng {sys.argv}, ")
+
+    sam_checkpoint = "/home/hulbertc@hhmi.org/git/saalfeld/paintera-sam/sam_vit_h_4b8939.pth"
+    model_type = "vit_h"
+    device = "cuda"
+    # device = "cpu"
+>>>>>>> d36c382 (feat: add onnx variant)
     sam = sam_model_registry[model_type](checkpoint=sam_checkpoint)
     sam.to(device=device)
 
     start = time.time()
+<<<<<<< HEAD
     predictor = SamPredictor(sam)
     print(f"Loading Model: {time.time() - start}")
     start = time.time()
@@ -88,4 +124,15 @@ if __name__ == "__main__":
     print(f"Overall: {time.time() - begining}")
     # predict("/tmp/sam.png", 250, 350, show=True)
 
+=======
+    print(f"Loading Model... ", end="")
+    predictor = SamPredictor(sam)
+    print(f"{time.time() - start}")
+    start = time.time()
+    print(f"Segmentation... ", end="")
+    predict("/tmp/sam.png", 250, 350, predictor=predictor, show=True)
+    print(f"{time.time() - start}")
+    print(f"Overall: {time.time() - begining}")
+
+>>>>>>> d36c382 (feat: add onnx variant)
 
