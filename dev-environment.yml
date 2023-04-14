@@ -258,4 +258,5 @@ dependencies:
       - torch==2.0.0
       - triton==2.0.0
       - werkzeug==2.2.3
+      - validate-pyproject[all]
       - -e .

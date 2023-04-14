@@ -32,15 +32,15 @@ def show_box(box, ax):
     w, h = box[2] - box[0], box[3] - box[1]
     ax.add_patch(plt.Rectangle((x0, y0), w, h, edgecolor='green', facecolor=(0,0,0,0), lw=2))
 
-h_checkpoint = "/home/hulbertc@hhmi.org/git/saalfeld/paintera-sam/sam_vit_h_4b8939.pth"
+h_checkpoint = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_h_4b8939.pth"
 h_model_type = "vit_h"
-h_onnx_model_path = "/home/hulbertc@hhmi.org/git/saalfeld/paintera-sam/sam_vit_h_4b8939.onnx"
-h_quantized_onnx = "/home/hulbertc@hhmi.org/git/saalfeld/paintera-sam/sam_vit_h_4b8939_quantized.onnx"
+h_onnx_model_path = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_h_4b8939.onnx"
+h_quantized_onnx = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_h_4b8939_quantized.onnx"
 
-b_checkpoint = "/home/hulbertc@hhmi.org/git/saalfeld/paintera-sam/sam_vit_b_01ec64.pth"
+b_checkpoint = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_b_01ec64.pth"
 b_model_type = "vit_b"
-b_onnx_model_path = "/home/hulbertc@hhmi.org/git/saalfeld/paintera-sam/sam_vit_b_01ec64.onnx"
-b_quantized_onnx = "/home/hulbertc@hhmi.org/git/saalfeld/paintera-sam/sam_vit_b_01ec64_quantized.onnx"
+b_onnx_model_path = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_b_01ec64.onnx"
+b_quantized_onnx = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_b_01ec64_quantized.onnx"
 def export_onnx_model(sam : Sam, onnx_model_path : str, quantized_onnx_model_path : str):
     sam_onnx_model = SamOnnxModel(sam, return_single_mask=True)
 
@@ -90,7 +90,8 @@ def export_onnx_model(sam : Sam, onnx_model_path : str, quantized_onnx_model_pat
     )
 
 def load_model(sam : Sam, model_path) :
-    ort_session = onnxruntime.InferenceSession(model_path)
+    ort_session = onnxruntime.InferenceSession(model_path, providers=['CUDAExecutionProvider']) #, 'CPUExecutionProvider'])
+    print(f"Device: {onnxruntime.get_device()}")
     sam.to(device="cuda")
     # sam.to(device="cpu")
     return SamPredictor(sam), ort_session
@@ -205,16 +206,10 @@ if __name__ == '__main__':
     print()
     print(f"Overall: {time.time() - begin}")
 
-    # print()
-    # print("Reused Image Predications:")
-    #
-    # for i in range(3):
-    #     print(f"{i}\t", end="")
-    #     predict_current_image(predictor, ort_session, 225, 350, image, image_embedding, show=False)
-    # print()
+    print()
+    print("Reused Image Predications:")
 
-    # print("Show")
-    # run_predict(predictor, ort_session, 425, 350, image, image_embedding, show=True)
-    # run_predict(predictor, ort_session, 225, 550, image, image_embedding, show=True)
-    # run_predict(predictor, ort_session, 425, 780, image, image_embedding, show=True)
-    # run_predict(predictor, ort_session, 825, 850, image, image_embedding, show=True)
+    for i in range(3):
+        print(f"{i}\t", end="")
+        predict_current_image(predictor, ort_session, 225, 350, image, image_embedding, show=False)
+    print()

@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "paintera_sam"
+version = "0.1.0.dev0"
+description = "Paintera-SAM: Segment Anything Python scripts for Paintera"
+license = {text = "Simplified BSD License"}
+authors = [{name = "Paintera-SAM developers"}]
+readme = "README.md"
+keywords = ["python"]
+classifiers = [
+    "Development Status :: 1 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Java Libraries",
+    "Topic :: Software Development :: Libraries :: JavaScript Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
+
+# NB: Keep this in sync with environment.yml AND dev-environment.yml!
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "segment_anything",
+    "opencv-python",
+    "numpy",
+]
+
+[project.optional-dependencies]
+# NB: Keep this in sync with dev-environment.yml!
+dev = [
+    "autopep8",
+    "black",
+    "build",
+    "flake8",
+    "isort",
+    "pytest",
+    "toml",
+    "matplotlib",
+    "validate-pyproject[all]",
+]
+
+[project.urls]
+homepage = "https://github.com/cmhulbert/paintera-sam"
+documentation = "https://github.com/cmhulbert/paintera-sam/blob/main/README.md"
+source = "https://github.com/cmhulbert/paintera-sam"
+download = "https://pypi.org/project/paintera_sam"
+tracker = "https://github.com/cmhulbert/paintera-sam/issues"
+
+[tool.isort]
+profile = "black"
