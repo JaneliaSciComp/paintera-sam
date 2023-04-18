@@ -4,3 +4,4 @@
 *.onnx
 __pycache__/
 *.py[cod]
+paintera_sam.egg-info
