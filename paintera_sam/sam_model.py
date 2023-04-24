@@ -1,10 +1,17 @@
 import sys
+import os
+import time
+import logging
 
 import cv2
+import torch
 import matplotlib.pyplot as plt
 import numpy as np
-from segment_anything import SamPredictor, sam_model_registry
-import time
+from segment_anything import SamPredictor, sam_model_registry, SamAutomaticMaskGenerator
+
+logging.basicConfig(format='%(message)s', level=logging.INFO)
+
+module_dir = os.path.dirname(__file__)
 
 
 def show_points(coords, labels, ax, marker_size=375):
@@ -27,7 +34,7 @@ def show_mask(mask, ax, random_color=False):
 
 
 def new_predictor(model_type="vit_h",
-                  checkpoint="/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_h_4b8939.pth",
+                  checkpoint = os.path.join(module_dir, "sam_vit_h_4b8939.pth"),
                   device="cuda") -> SamPredictor:
     model_type = model_type
     checkpoint = checkpoint
@@ -53,9 +60,9 @@ def predict_current_image(predictor: SamPredictor, x: int, y: int, image, show: 
     return masks
 
 
-def predict_new_image(img, x, y, out="/tmp/mask.png", show=False, predictor=None):
+def predict_new_image(img, x, y, out="/tmp/mask.png", show=False, predictor=None, device=None):
     if predictor == None:
-        predictor=new_predictor()
+        predictor=new_predictor(device=device)
         # model_type = "vit_h"
         # checkpoint = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_h_4b8939.pth"
         # sam = sam_model_registry[model_type](checkpoint=checkpoint)
@@ -84,49 +91,47 @@ def predict_new_image(img, x, y, out="/tmp/mask.png", show=False, predictor=None
 
 def main():
     begin = time.time()
-    print("Initialize...", end="")
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     start = time.time()
     model_type = "vit_h"
-    checkpoint = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_h_4b8939.pth"
+    checkpoint = os.path.join(module_dir, "sam_vit_h_4b8939.pth")
     sam = sam_model_registry[model_type](checkpoint=checkpoint)
-    sam.to(device="cuda")
-    print(time.time() - start)
+    sam.to(device=device)
+    logging.info(f'Initialize...{time.time() - start}')
 
-    print("Load model...", end="")
     start = time.time()
 
     predictor = SamPredictor(sam)
-    print(time.time() - start)
-    print()
+    logging.info(f'Load model...{time.time() - start}')
 
     start = time.time()
-    image = predict_new_image("/tmp/sam.png", 225, 350, predictor=predictor, show=False)
+    image = predict_new_image("/tmp/sam.png", 225, 350, predictor=predictor, show=False, device=device)
 
-    print(f"New Image Prediction: {time.time() - start}")
-    print()
-
-    start = time.time()
-    image = predict_new_image("/tmp/sam.png", 225, 350, predictor=predictor, show=False)
-
-    print(f"New Image Prediction: {time.time() - start}")
-    print()
+    logging.info(f"New Image Prediction: {time.time() - start}")
 
     start = time.time()
-    image = predict_new_image("/tmp/sam.png", 225, 350, predictor=predictor, show=False)
+    image = predict_new_image("/tmp/sam.png", 100, 350, predictor=predictor, show=False, device=device)
 
-    print(f"New Image Prediction: {time.time() - start}")
-    print()
+    logging.info(f"New Image Prediction: {time.time() - start}")
 
-    print()
-    print(f"Overall: {time.time() - begin}")
+    start = time.time()
+    image = predict_new_image("/tmp/sam.png", 429, 76, predictor=predictor, show=False, device=device)
 
-    print()
-    print("Reused Image Predications:")
+    logging.info(f"New Image Prediction: {time.time() - start}")
+
+    logging.info(f"Overall: {time.time() - begin}")
+
+    logging.info("Reused Image Predications:")
 
     for i in range(3):
         print(f"{i}\t", end="")
         predict_current_image(predictor, 225, 350, image, show=False)
     print()
+
+    # mask_generator = SamAutomaticMaskGenerator(sam)
+    # masks = mask_generator.generate(cv2.imread("/tmp/sam.png"))
+    # print(len(masks))
+
 
 
 if __name__ == "__main__":

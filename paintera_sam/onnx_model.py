@@ -1,5 +1,6 @@
 import math
 import time
+import warnings
 
 import torch
 import numpy as np
@@ -13,7 +14,6 @@ from segment_anything.utils.onnx import SamOnnxModel
 import onnxruntime
 from onnxruntime.quantization import QuantType
 from onnxruntime.quantization.quantize import quantize_dynamic
-import warnings
 
 
 def show_mask(mask, ax):
@@ -37,16 +37,15 @@ def show_box(box, ax):
     w, h = box[2] - box[0], box[3] - box[1]
     ax.add_patch(plt.Rectangle((x0, y0), w, h, edgecolor='green', facecolor=(0, 0, 0, 0), lw=2))
 
-
-h_model = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_h_4b8939.pth"
+h_model = "./sam_vit_h_4b8939.pth"
 h_model_type = "vit_h"
-h_onnx_model = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_h_4b8939.onnx"
-h_quantized_onnx = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_h_4b8939_quantized.onnx"
+h_onnx_model = "./sam_vit_h_4b8939.onnx"
+h_quantized_onnx = "./sam_vit_h_4b8939_quantized.onnx"
 
-b_model = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_b_01ec64.pth"
+b_model = "./sam_vit_b_01ec64.pth"
 b_model_type = "vit_b"
-b_onnx_model_path = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_b_01ec64.onnx"
-b_quantized_onnx = "/home/hulbertc@hhmi.org/git/saalfeld/paintera_sam/sam_vit_b_01ec64_quantized.onnx"
+b_onnx_model_path = "./sam_vit_b_01ec64.onnx"
+b_quantized_onnx = "./sam_vit_b_01ec64_quantized.onnx"
 
 
 def export_onnx_model(sam: Sam, onnx_model_path: str, quantized_onnx_model_path: str):
@@ -100,6 +99,7 @@ def export_onnx_model(sam: Sam, onnx_model_path: str, quantized_onnx_model_path:
 def load_model(onnx_model: str = h_onnx_model, sam_model: str = h_model, model_type: str = h_model_type,
                device: str = "cuda") -> tuple[SamPredictor, InferenceSession]:
     model = sam_model_registry[model_type](checkpoint=sam_model)
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     session = onnxruntime.InferenceSession(onnx_model, providers=['CUDAExecutionProvider'])
     model.to(device=device)
     return SamPredictor(model), session
