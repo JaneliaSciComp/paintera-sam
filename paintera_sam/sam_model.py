@@ -9,8 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from segment_anything import SamPredictor, sam_model_registry, SamAutomaticMaskGenerator
 
-logging.basicConfig(format='%(message)s', level=logging.INFO)
-
 module_dir = os.path.dirname(__file__)
 
 
